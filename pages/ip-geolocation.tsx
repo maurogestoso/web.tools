@@ -1,16 +1,9 @@
 import { NextPage } from "next";
 import React from "react";
-import {
-  fetchIpGeolocationData,
-  IpGeoloactionAPIError,
-  IpGeolocationData,
-} from "../lib/ipGeoloaction";
+import { useIpGeolocation } from "../lib/ipGeoloaction";
 
 const IpGeolocation: NextPage = () => {
-  const [geolocationData, setGeolocationData] =
-    React.useState<IpGeolocationData>();
-  const [error, setError] = React.useState<IpGeoloactionAPIError>();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const { isLoading, error, data, fetchIpGeolocationData } = useIpGeolocation();
 
   async function formAction(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,16 +11,7 @@ const IpGeolocation: NextPage = () => {
     const formData = new FormData(event.currentTarget);
     const ipAddress = formData.get("ip-address")!;
 
-    try {
-      setIsLoading(true);
-      const geoData = await fetchIpGeolocationData(ipAddress.toString());
-      setGeolocationData(geoData);
-    } catch (err) {
-      const error = err as IpGeoloactionAPIError;
-      setError(error);
-    } finally {
-      setIsLoading(false);
-    }
+    fetchIpGeolocationData(ipAddress.toString());
   }
 
   return (
@@ -39,7 +23,9 @@ const IpGeolocation: NextPage = () => {
           type="text"
           placeholder="Enter IP address"
           required
+          pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         />
+        <small>For example: 23.123.12.11</small>
         <button
           type="submit"
           aria-busy={isLoading ? "true" : "false"}
@@ -48,7 +34,9 @@ const IpGeolocation: NextPage = () => {
           Get geolocation data
         </button>
       </form>
-      {geolocationData && <pre>{JSON.stringify(geolocationData, null, 2)}</pre>}
+      {data && (
+        <pre style={{ padding: 8 }}>{JSON.stringify(data, null, 2)}</pre>
+      )}
       {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
     </>
   );
