@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import Head from "next/head";
-import Link from "next/link";
+import { ReactNode } from "react"
+import Head from "next/head"
+import Link from "next/link"
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -17,7 +17,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         {children}
       </main>
     </>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

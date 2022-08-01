@@ -1,17 +1,17 @@
-import { NextPage } from "next";
-import React from "react";
-import { useIpGeolocation } from "../lib/ipGeoloaction";
+import { NextPage } from "next"
+import React from "react"
+import { IP_PATTERN, useIpGeolocation } from "../lib/ipGeoloaction"
 
 const IpGeolocation: NextPage = () => {
-  const { isLoading, error, data, fetchIpGeolocationData } = useIpGeolocation();
+  const { isLoading, error, data, fetchIpGeolocationData } = useIpGeolocation()
 
   async function formAction(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+    event.preventDefault()
 
-    const formData = new FormData(event.currentTarget);
-    const ipAddress = formData.get("ip-address")!;
+    const formData = new FormData(event.currentTarget)
+    const ipAddress = formData.get("ip-address")!
 
-    fetchIpGeolocationData(ipAddress.toString());
+    fetchIpGeolocationData(ipAddress.toString())
   }
 
   return (
@@ -23,7 +23,7 @@ const IpGeolocation: NextPage = () => {
           type="text"
           placeholder="Enter IP address"
           required
-          pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+          pattern={IP_PATTERN}
         />
         <small>For example: 23.123.12.11</small>
         <button
@@ -39,7 +39,7 @@ const IpGeolocation: NextPage = () => {
       )}
       {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
     </>
-  );
-};
+  )
+}
 
-export default IpGeolocation;
+export default IpGeolocation
