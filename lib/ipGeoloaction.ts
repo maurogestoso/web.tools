@@ -37,7 +37,7 @@ export function useIpGeolocation(): {
       return
     }
 
-    const data: IpGeolocationData = await response.json() // .then(res => res.json())
+    const data: IpGeolocationData = await response.json()
     setIsLoading(false)
     setData(data)
     setError(undefined)
