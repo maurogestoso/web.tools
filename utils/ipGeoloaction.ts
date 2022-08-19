@@ -6,46 +6,17 @@ export const IP_PATTERN =
 const OPTIONS = {
   method: "GET",
   headers: {
-    "X-RapidAPI-Key": process.env.NEXT_PUBLIC_IP_GEO_API_KEY!,
+    "X-RapidAPI-Key": process.env.IP_GEO_API_KEY!,
     "X-RapidAPI-Host": "ip-geo-location.p.rapidapi.com",
   },
 }
 
-export function useIpGeolocation(): {
-  isLoading: boolean
-  error?: IpGeoloactionAPIError
-  data?: IpGeolocationData
-  fetchIpGeolocationData: (ipAddress: string) => void
-} {
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<any>()
-  const [data, setData] = React.useState<IpGeolocationData>()
-
-  async function fetchIpGeolocationData(ipAddress: string) {
-    setIsLoading(true)
-
-    const response = await fetch(
-      `https://ip-geo-location.p.rapidapi.com/ip/${ipAddress}?format=json`,
-      OPTIONS
-    )
-
-    if (!response.ok) {
-      const error = await response.json()
-      setIsLoading(false)
-      setError(error)
-      setData(undefined)
-      return
-    }
-
-    const data: IpGeolocationData = await response.json()
-    setIsLoading(false)
-    setData(data)
-    setError(undefined)
-  }
-
-  return { isLoading, fetchIpGeolocationData, error, data }
+export function fetchIpGeolocationData(ipAddress: string) {
+  return fetch(
+    `https://ip-geo-location.p.rapidapi.com/ip/${ipAddress}?format=json`,
+    OPTIONS
+  )
 }
-
 export interface IpGeoloactionAPIError {
   status: "failed"
   error: {
