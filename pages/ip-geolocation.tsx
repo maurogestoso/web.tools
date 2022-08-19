@@ -1,9 +1,20 @@
 import { NextPage } from "next"
 import React from "react"
-import { IP_PATTERN, useIpGeolocation } from "../lib/ipGeoloaction"
+import { IP_PATTERN } from "../utils/ipGeoloaction"
+import { trpc } from "../utils/trpc"
 
 const IpGeolocation: NextPage = () => {
-  const { isLoading, error, data, fetchIpGeolocationData } = useIpGeolocation()
+  const [ipAddress, setIpAddress] = React.useState<string>()
+  const {
+    isLoading,
+    data: ipData,
+    isError,
+    error: ipError,
+  } = trpc.useQuery(["ip-geolocation", { ip: ipAddress }], {
+    retry: false,
+  })
+
+  console.log("🚀 ~ file: ip-geolocation.tsx ~ line 9 ~ ipData", ipData)
 
   async function formAction(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -11,7 +22,7 @@ const IpGeolocation: NextPage = () => {
     const formData = new FormData(event.currentTarget)
     const ipAddress = formData.get("ip-address")!
 
-    fetchIpGeolocationData(ipAddress.toString())
+    setIpAddress(ipAddress.toString())
   }
 
   return (
@@ -28,16 +39,22 @@ const IpGeolocation: NextPage = () => {
         <small>For example: 23.123.12.11</small>
         <button
           type="submit"
-          aria-busy={isLoading ? "true" : "false"}
-          disabled={isLoading}
+          aria-busy={ipAddress && isLoading ? "true" : "false"}
+          disabled={ipAddress && isLoading ? true : false}
         >
           Get geolocation data
         </button>
       </form>
-      {data && (
-        <pre style={{ padding: 8 }}>{JSON.stringify(data, null, 2)}</pre>
+      {ipData && (
+        <section>
+          <h3>
+            {ipData.country.flag.emoji} {ipData.city.name}, {ipData.area.name},{" "}
+            {ipData.country.name}
+          </h3>
+          <pre style={{ padding: 8 }}>{JSON.stringify(ipData, null, 2)}</pre>
+        </section>
       )}
-      {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
+      {isError && <pre style={{ padding: 8 }}>{ipError.message}</pre>}
     </>
   )
 }
